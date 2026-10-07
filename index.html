@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Blog</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <nav class="nav">
+      <a href="index.html" class="logo" aria-label="Home"><img src="assets/logo.svg" alt="Logo"></a>
+      <ul>
+        <li><a href="https://arnoldt01.github.io/blog/" class="active">Home</a></li>
+        <li><a href="https://arnoldt01.github.io/">Portfolio</a></li>
+      </ul>
+    </nav>
+
+    <header class="intro">
+      <h1>Arnold's blog</h1>
+      <p>Notes, experiments, and write-ups. Welcome.</p>
+      <div class="rule"></div>
+    </header>
+
+    <main id="posts"></main>
+
+    <footer>© <span id="yr"></span> — All rights reserved.</footer>
+  </div>
+
+  <script src="posts.js"></script>
+  <script>
+    const root = document.getElementById("posts");
+    const byYear = {};
+    POSTS.forEach(p => (byYear[p.date.slice(0, 4)] ??= []).push(p));
+
+    Object.keys(byYear).sort().reverse().forEach(year => {
+      const h = document.createElement("div");
+      h.className = "year";
+      h.textContent = year;
+      root.appendChild(h);
+
+      const ul = document.createElement("ul");
+      ul.className = "post-list";
+      byYear[year].forEach(p => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <a href="article.html?p=${p.slug}">
+            <time datetime="${p.date}">${formatDate(p.date, "short")}</time>
+            <span class="title">${p.title}</span>
+          </a>`;
+        ul.appendChild(li);
+      });
+      root.appendChild(ul);
+    });
+
+    document.getElementById("yr").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

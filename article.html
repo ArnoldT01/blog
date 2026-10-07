@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Article</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <nav class="nav">
+      <a href="index.html" class="logo" aria-label="Home"><img src="assets/logo.svg" alt="Logo"></a>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="https://arnoldt01.github.io/">Portfolio</a></li>
+      </ul>
+    </nav>
+
+    <article class="article">
+      <div class="meta">
+        <time id="date"></time>
+      </div>
+      <h1 id="title"></h1>
+      <div class="body" id="body"></div>
+    </article>
+
+    <nav class="pager">
+      <a id="prev" href="#">← Previous Article</a>
+      <a id="next" href="#">Next Article →</a>
+    </nav>
+
+    <footer>© <span id="yr"></span> — All rights reserved.</footer>
+  </div>
+
+  <script src="posts.js"></script>
+  <script>
+    const slug = new URLSearchParams(location.search).get("p");
+    let i = POSTS.findIndex(p => p.slug === slug);
+    if (i < 0) i = 0;
+    const post = POSTS[i];
+
+    document.title = post.title;
+    const date = document.getElementById("date");
+    date.textContent = formatDate(post.date);
+    date.setAttribute("datetime", post.date);
+    document.getElementById("title").textContent = post.title;
+    document.getElementById("body").innerHTML = post.body;
+
+    // POSTS is newest-first: "previous" = older, "next" = newer
+    const setPager = (id, target) => {
+      const el = document.getElementById(id);
+      if (target) el.href = `article.html?p=${target.slug}`;
+      else el.classList.add("disabled");
+    };
+    setPager("prev", POSTS[i + 1]);
+    setPager("next", POSTS[i - 1]);
+
+    document.querySelectorAll(".code-block .copy").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const code = btn.closest(".code-block").querySelector("pre").innerText;
+        try {
+          await navigator.clipboard.writeText(code);
+          btn.textContent = "Copied!";
+        } catch {
+          btn.textContent = "Copy failed";
+        }
+        setTimeout(() => (btn.textContent = "Copy Code"), 1500);
+      });
+    });
+
+    document.getElementById("yr").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
