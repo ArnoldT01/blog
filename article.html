@@ -39,6 +39,10 @@
     let i = POSTS.findIndex(p => p.slug === slug);
     if (i < 0) i = 0;
     const post = POSTS[i];
+    if (!post) {
+      location.replace("index.html");
+      throw new Error("No posts");
+    }
 
     document.title = post.title;
     const date = document.getElementById("date");
